@@ -1,4 +1,4 @@
-# NServiceBusWithRabbitMQ  (locally running RabbitMQ container required)
+# NServiceBusWithRabbitMQ<br>(locally running RabbitMQ container required)
 
 ## Example implementation of NServiceBus with RabbitMQ
 
