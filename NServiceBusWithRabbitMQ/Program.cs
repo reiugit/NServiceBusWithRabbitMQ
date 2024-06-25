@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using NServiceBusWithRabbitMQ.Commands;
 using NServiceBusWithRabbitMQ.Events;
+using RabbitMQ.Client.Exceptions;
 
 var builder = Host.CreateApplicationBuilder();
 
@@ -21,8 +22,24 @@ var app = builder.Build();
 
 var messageSession = app.Services.GetRequiredService<IMessageSession>();
 
-await messageSession.Publish(new ExampleEvent("Example Event"));
-await messageSession.Send(new ExampleCommand("Example Command"));
+try
+{
+    await messageSession.Publish(new ExampleEvent("Example Event"));
+    await messageSession.Send(new ExampleCommand("Example Command"));
+}
+catch (Exception ex)
+{
+    if (ex is BrokerUnreachableException)
+    {
+        Console.WriteLine("\nLocal RabbitMQ Instance not found.\nPlease start RabbitMQ Container and then restart the application.");
+    }
+    else
+    {
+        Console.WriteLine(ex.Message);
+    }
+
+    return;
+}
 
 app.Run();
 
